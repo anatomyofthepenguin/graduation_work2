@@ -42,6 +42,7 @@
           <ul class="nav navbar-nav">
               <li class="active"><a href="/">Авторизация</a></li>
               <li><a href="/user/register">Регистрация</a></li>
+              <li><a href="/user/form">Форма</a></li>
               <li><a href="/user/list">Список пользователей</a></li>
               <li><a href="/user/files">Список файлов</a></li>
           </ul>
@@ -58,13 +59,14 @@
           <th>Фотография</th>
           <th>Действия</th>
         </tr>
-        <tr>
-          <td>1.jpg</td>
-          <td><img src="http://lorempixel.com/people/200/200/" alt=""></td>
-          <td>
-            <a href="">Удалить аватарку пользователя</a>
-          </td>
-        </tr>
+        <?php if ($userFiles) : ?>
+            <?php foreach ($userFiles as $file) : ?>
+            <tr>
+            <td><?=$file["name"]?></td>
+            <td><img src="<?=$file["url"]?>" alt=""></td>
+            </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
       </table>
 
     </div><!-- /.container -->

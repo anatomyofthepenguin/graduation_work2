@@ -41,6 +41,7 @@
           <ul class="nav navbar-nav">
               <li class="active"><a href="/">Авторизация</a></li>
               <li><a href="/user/register">Регистрация</a></li>
+              <li><a href="/user/form">Форма</a></li>
               <li><a href="/user/list">Список пользователей</a></li>
               <li><a href="/user/files">Список файлов</a></li>
           </ul>
@@ -51,25 +52,30 @@
     <div class="container">
 
       <div class="form-container">
-        <form class="form-horizontal" action="">
+        <form class="form-horizontal" action="" method="post">
           <div class="form-group">
             <label for="inputEmail3" class="col-sm-2 control-label">Логин</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputEmail3" placeholder="Логин">
+              <input type="text" class="form-control" id="inputEmail3" placeholder="Логин" name="login">
             </div>
           </div>
           <div class="form-group">
             <label for="inputPassword3" class="col-sm-2 control-label">Пароль</label>
             <div class="col-sm-10">
-              <input type="password" class="form-control" id="inputPassword3" placeholder="Пароль">
+              <input type="password" class="form-control" id="inputPassword3" placeholder="Пароль" name="password">
             </div>
           </div>
           <div class="form-group">
             <label for="inputPassword4" class="col-sm-2 control-label">Пароль (Повтор)</label>
             <div class="col-sm-10">
-              <input type="password" class="form-control" id="inputPassword4" placeholder="Пароль">
+              <input type="password" class="form-control" id="inputPassword4" placeholder="Пароль" name="confirm_password">
             </div>
           </div>
+            <?php if ($errorMessage) : ?>
+                <div class="form-group">
+                    <p style="color: tomato"><?=$errorMessage?></p>
+                </div>
+            <?php endif; ?>
           <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
               <button type="submit" class="btn btn-default">Зарегистрироваться</button>
