@@ -2,11 +2,13 @@
 
 namespace Models;
 
-class User
+use Illuminate\Database\Eloquent\Model as Eloquent;
+
+class User extends Eloquent
 {
     protected $errors;
-    /* @var $db \PDO*/
-    protected $db;
+    protected $guarded = ['id'];
+    public $timestamps = false;
 
     const ERROR_EMPTY_FIELD = 1;
     const ERROR_FILE_UPLOAD = 2;
@@ -14,20 +16,8 @@ class User
     const ERROR_USER_EXIST = 4;
     const ERROR_USER_NOT_FOUND = 5;
     const ERROR_PASSWORD_CONFIRM = 6;
-
-    public function __construct()
-    {
-        $this->db = DB::getConnect();
-    }
-
-    public function getUserByLogin(string $login)
-    {
-        $query = "SELECT * FROM users WHERE login LIKE ?";
-        $result = $this->db->prepare($query);
-        $result->execute([$login]);
-        $user = $result->fetch(\PDO::FETCH_ASSOC);
-        return $user;
-    }
+    const ERROR_UPDATE_DATA = 7;
+    const ERROR_EMPTY_REQUIRED = 8;
 
     public function getUsers(string $sortMethod = "ASC")
     {
@@ -45,17 +35,15 @@ class User
         if (!empty($this->errors)) {
             return false;
         }
+        $userId = $_SESSION["user_id"];
 
-        $requestParams = '';
-        foreach ($userData as $field => $value) {
-            $requestParams .= "`$field` = :$field, ";
+        $result = User::where("id", $userId)->update($userData);
+
+        if (!$result) {
+            $this->errors[] = self::ERROR_UPDATE_DATA;
         }
 
-        $requestParams = trim($requestParams, " ,");
-        $request = "UPDATE users SET $requestParams " . "WHERE id=1";
-
-        $result = $this->db->prepare($request);
-        $result->execute($userData);
+        return $result;
     }
 
 
@@ -74,19 +62,17 @@ class User
             return false;
         }
 
-        $exUser = $this->getUserByLogin($userData["login"]);
+        $user = User::firstOrNew(['login' => $userData["login"]]);
 
-        if (!$exUser) {
-            $password = $this->passwordHash($userData["password"]);
-            $query = "INSERT INTO `users` SET `login` = ?, `password` = ?";
-            $result = $this->db->prepare($query);
-            $result->execute([$userData["login"], $password]);
+        if (!$user->id) {
+            $user->password = $userData["password"];
+            $user->save();
         } else {
             $this->errors[] = self::ERROR_USER_EXIST;
             return false;
         }
 
-        return $this->db->lastInsertId();
+        return $user->id;
     }
 
     public function userAuth($userData)
@@ -99,10 +85,10 @@ class User
             return false;
         }
 
-        $exUser = $this->getUserByLogin($userData["login"]);
-        $password = $this->passwordHash($userData["password"]);
-        if ($exUser && ($exUser["password"] === $password)) {
-            return $exUser["id"];
+        $exUser =
+            User::where('login', 'like', $userData["login"])->where('password', '=', $userData["password"])->first();
+        if ($exUser) {
+            return $exUser->id;
         } else {
             $this->errors[] = self::ERROR_USER_NOT_FOUND;
             return false;
@@ -155,6 +141,50 @@ class User
         }
 
         return $validateArray;
+    }
+
+    public static function checkData(array $formData, array $requiredField = null)
+    {
+        $result = [];
+
+        foreach ($formData as &$value) {
+            if (is_string($value)) {
+                $value = trim($value);
+            }
+        }
+
+        $result["age"] = (int) $formData["age"];
+        if ($result["age"] < 1) {
+            unset($result["age"]);
+        }
+
+        if ($formData["descr"]) {
+            $result["descr"] = htmlspecialchars($formData["descr"]);
+        }
+
+        if (filter_var($formData["avatar"], FILTER_VALIDATE_URL)) {
+            $result["avatar"] = $formData["avatar"];
+        }
+
+        if ($formData["name"]) {
+            $result["name"] = $formData["name"];
+        }
+
+        if ($formData["login"]) {
+            $result["login"] = $formData["login"];
+        }
+
+        if (!$requiredField) {
+            return $result;
+        }
+
+        foreach ($requiredField as $field) {
+            if (!isset($result[$field])) {
+                $result["error"] = self::ERROR_EMPTY_REQUIRED;
+                break;
+            }
+        }
+        return $result;
     }
 
     protected function passwordHash(string $password)

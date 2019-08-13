@@ -73,8 +73,8 @@ class UserController
             header('Location: /');
             return false;
         }
-        $user = new User();
-        $users = $user->getUsers();
+
+        $users = User::all();
 
         include '../views/list.php';
     }
@@ -85,10 +85,10 @@ class UserController
             header('Location: /');
             return false;
         }
-        $files = new File();
+
         $userId = $_SESSION["user_id"];
         if ($userId) {
-            $userFiles = $files->getUserFiles($userId);
+            $userFiles = File::where("user_id", $_SESSION["user_id"])->get();
         }
         include '../views/filelist.php';
     }
@@ -100,5 +100,56 @@ class UserController
         foreach ($filesData as $fileData) {
             $file->fileUpload($fileData);
         }
+    }
+
+    public function addAction()
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $checkData = User::checkData($_POST, ["login", "avatar"]);
+
+            if ($checkData["error"] === User::ERROR_EMPTY_REQUIRED) {
+                $errorMessage = "Поля логин и аватар обязательны!";
+            } else {
+                $exUser = User::where('login', 'like', $checkData["login"])->first();
+                if (!$exUser) {
+                    User::create($checkData);
+                    header('Location: /user/list');
+                    return true;
+                } else {
+                    $errorMessage = "Пользователь существует";
+                }
+            }
+
+
+        }
+
+        include '../views/adduser.php';
+        return true;
+    }
+
+    public function editAction(int $userId)
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            header("HTTP/1.1 404 Not Found");
+            return false;
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $checkData = User::checkData($_POST);
+
+            if (!empty($checkData)) {
+                User::where("id", $userId)->update($checkData);
+                header('Location: /user/list');
+                return true;
+
+            } else {
+                $errorMessage = "Ни одно из полей не было обновлено, убедитесь в правильности заполнения";
+            }
+        }
+
+        include '../views/edituser.php';
+        return true;
     }
 }

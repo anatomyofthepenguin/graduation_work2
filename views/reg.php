@@ -44,6 +44,7 @@
               <li><a href="/user/form">Форма</a></li>
               <li><a href="/user/list">Список пользователей</a></li>
               <li><a href="/user/files">Список файлов</a></li>
+              <li><a href="/user/add">Добавить пользователя</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

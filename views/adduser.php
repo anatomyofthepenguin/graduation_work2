@@ -54,7 +54,13 @@
 <div class="container">
 
     <div class="form-container">
-        <form enctype="multipart/form-data" class="form-horizontal" action="" method="post">
+        <form class="form-horizontal" action="" method="post">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Логин(email)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" placeholder="Email" name="login">
+                </div>
+            </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">Имя</label>
                 <div class="col-sm-10">
@@ -76,10 +82,15 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Аватар</label>
                 <div class="col-sm-10">
-                    <input type="file" class="form-control" name="avatar">
+                    <input type="text" class="form-control" name="avatar" placeholder="url">
                 </div>
             </div>
-            <input type="submit" value="Отправить">
+            <?php if ($errorMessage) : ?>
+                <div class="form-group">
+                    <p style="color: tomato"><?=$errorMessage?></p>
+                </div>
+            <?php endif; ?>
+            <input type="submit" value="Сохранить">
         </form>
     </div>
 

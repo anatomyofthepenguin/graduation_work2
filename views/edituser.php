@@ -54,32 +54,43 @@
 <div class="container">
 
     <div class="form-container">
-        <form enctype="multipart/form-data" class="form-horizontal" action="" method="post">
+        <form class="form-horizontal" action="" method="post">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Логин(email)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" placeholder="Email" name="login" value="<?=$user["login"]?>">
+                </div>
+            </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">Имя</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" placeholder="Имя" name="name">
+                    <input type="text" class="form-control" placeholder="Имя" name="name" value="<?=$user["name"]?>">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail3" class="col-sm-2 control-label">Возраст</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" placeholder="Возраст" name="age">
+                    <input type="text" class="form-control" placeholder="Возраст" name="age" value="<?=$user["age"]?>">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail3" class="col-sm-2 control-label">Описание</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" placeholder="Описание" name="descr">
+                    <input type="text" class="form-control" placeholder="Описание" name="descr" value="<?=$user["descr"]?>">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">Аватар</label>
                 <div class="col-sm-10">
-                    <input type="file" class="form-control" name="avatar">
+                    <input type="text" class="form-control" name="avatar" value="<?=$user["avatar"]?>">
                 </div>
             </div>
-            <input type="submit" value="Отправить">
+            <?php if ($errorMessage) : ?>
+            <div class="form-group">
+                <p style="color: tomato"><?=$errorMessage?></p>
+            </div>
+            <?php endif; ?>
+            <input type="submit" value="Сохранить">
         </form>
     </div>
 

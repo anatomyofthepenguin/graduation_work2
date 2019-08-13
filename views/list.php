@@ -45,6 +45,7 @@
               <li><a href="/user/form">Форма</a></li>
               <li><a href="/user/list">Список пользователей</a></li>
               <li><a href="/user/files">Список файлов</a></li>
+              <li><a href="/user/add">Добавить пользователя</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -60,6 +61,7 @@
           <th>возраст</th>
           <th>описание</th>
           <th>Фотография</th>
+            <th>Действия</th>
         </tr>
         <?php if ($users) : ?>
             <?php foreach ($users as $user) : ?>
@@ -68,7 +70,8 @@
               <td><?=$user["name"]?></td>
               <td><?=$user["age"]?></td>
               <td><?=$user["descr"]?></td>
-              <td><img src="<?=$user["avatar"]?>" alt=""></td>
+              <td><img width="200px" height="auto" src="<?=$user["avatar"]?>" alt=""></td>
+              <td><a href="/user/edit/<?=$user["id"]?>">Редактировать</a></td>
             </tr>
             <?php endforeach; ?>
         <?php endif; ?>

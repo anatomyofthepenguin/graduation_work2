@@ -1,7 +1,8 @@
 <?php
 
+require '../vendor/autoload.php';
 require '../controllers/UserController.php';
-require '../models/DB.php';
+require '../config/orm_settings.php';
 require '../models/File.php';
 require '../models/User.php';
 
@@ -19,8 +20,10 @@ if ($currentUrl === "/") {
     $userController->indexAction();
 } elseif ($splitUrl[1] === "user") {
     $action = $splitUrl[2] . "Action";
+
     if (method_exists($userController, $action)) {
-        $userController->$action();
+        $arg = $splitUrl[3] ?? false;
+        $userController->$action($arg);
     } else {
         error404();
     }
